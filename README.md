@@ -5,8 +5,8 @@
 A reverse-engineering writeup of the **Jabra Elite 10 Gen 2** earbuds' on-board
 head tracking over Bluetooth LE. The goal was to drive spatial-audio plugins from
 the buds on **macOS**, the way the sibling
-[OpenNx](https://git.pg.edu.pl/p829296/opennx) and
-[mmrl-headtracker](https://git.pg.edu.pl/p829296/mmrl-headtracker) trackers do,
+[OpenNx](https://github.com/mormegil6/opennx) and
+[mmrl-osc](https://github.com/mormegil6/mmrl-osc) trackers do,
 with the same OSC output:
 
 | OSC address | Arguments | Target |
@@ -22,6 +22,13 @@ write-up is the deliverable.
 
 **Protocol and analysis:** the full reverse-engineered GATT map, the Fast Pair
 finding, and the capture evidence are in **[docs/PROTOCOL.md](docs/PROTOCOL.md)**.
+
+## Related projects
+
+Part of a set of open head-tracking tools for spatial audio:
+
+- [OpenNx](https://github.com/mormegil6/opennx) - Waves Nx head tracker → OSC bridge, cross-platform (macOS / Windows / Linux)
+- [mmrl-osc](https://github.com/mormegil6/mmrl-osc) - Mbientlab MetaMotion RL → OSC head tracker with host-side VQF sensor fusion
 
 ## Status
 
