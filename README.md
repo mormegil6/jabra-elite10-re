@@ -27,8 +27,8 @@ finding, and the capture evidence are in **[docs/PROTOCOL.md](docs/PROTOCOL.md)*
 
 Part of a set of open head-tracking tools for spatial audio:
 
-- [OpenNx](https://github.com/mormegil6/opennx) - Waves Nx head tracker → OSC bridge, cross-platform (macOS / Windows / Linux)
-- [mmrl-osc](https://github.com/mormegil6/mmrl-osc) - Mbientlab MetaMotion RL → OSC head tracker with host-side VQF sensor fusion
+- **OpenNx** ([GitLab](https://git.pg.edu.pl/p829296/opennx) / [GitHub](https://github.com/mormegil6/opennx)) - Waves Nx head tracker → OSC bridge, cross-platform (macOS / Windows / Linux)
+- **mmrl-osc** ([GitLab](https://git.pg.edu.pl/p829296/mmrl-osc) / [GitHub](https://github.com/mormegil6/mmrl-osc)) - Mbientlab MetaMotion RL → OSC head tracker with host-side VQF sensor fusion
 
 ## Status
 
