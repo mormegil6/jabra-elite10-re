@@ -1,0 +1,32 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.eggs/
+
+# PyInstaller build artifacts (build the binary locally; don't commit it)
+build/
+dist/
+*.spec
+
+# Virtual environments
+.venv/
+venv/
+env/
+ENV/
+jabra-venv/
+*-venv/
+
+# Editor / OS
+.vscode/
+.idea/
+.DS_Store
+
+# Logs / local data
+*.log
+
+# Raw BLE capture logs from the reverse-engineering stages (kept locally;
+# representative samples live in PROTOCOL.md instead)
+captures/*.txt
+captures/*.jsonl
+captures/*.csv
