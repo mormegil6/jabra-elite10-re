@@ -20,7 +20,7 @@ Silicon, macOS 14) and are documented with the raw evidence that produced them.
 | Advertised name | `Jabra Elite 10 Gen 2` |
 | Model Number (0x2A24) | `Jabra Elite 10 Gen 2` |
 | Manufacturer (0x2A29) | `Jabra` |
-| Serial Number (0x2A25) | `6CFBED0B75F9` (also embedded in service `32bf2fe6...`) |
+| Serial Number (0x2A25) | `6CFBED******` (per-unit, redacted; equals the device's BLE MAC, prefix `6CFBED` is GN Audio's OUI; also embedded in service `32bf2fe6...`) |
 | Firmware Revision (0x2A26) | `2.6.0` |
 | Hardware Revision (0x2A27) | `Version1.0` |
 | Fast Pair Model ID (0xFE2C / `fe2c1233`) | `35 d6 76` |
@@ -82,8 +82,8 @@ only found after fixing the enumeration hang (see below).**
 
 ### Other notable customs
 - `0x2454` / `2455` (notify,read) = `64 64 64` - wear/volume status; `2456` write.
-- `32bf2fe6-297c-4ceb-839c-1bf26a1155ac` / `5ab184f5...` = `6c fb ed 0b 75 f9 ...`
-  (the serial-number bytes; a device-identity blob).
+- `32bf2fe6-297c-4ceb-839c-1bf26a1155ac` / `5ab184f5...` = `6c fb ed xx xx xx ...`
+  (the serial-number / BLE-MAC bytes, unit part redacted; a device-identity blob).
 - `0x1846` CSIS exposes a 16-byte SIRK (coordinated-set membership for L/R buds).
 
 ---
@@ -203,19 +203,74 @@ key, obtainable only by phone-side instrumentation - Frida/root) is therefore a
 Unlike the Waves Nx / MMRL trackers (purpose-built orientation streamers), the
 Jabra may simply not expose a usable head-orientation feed to hosts.
 
-## Path forward
+## Rooted-Android test (executed)
 
-1. **Capture the handshake** (decisive): record the phone-buds BLE traffic while
-   enabling head tracking in Sound+ (Android btsnoop HCI log, or iOS PacketLogger).
-   This shows exactly which characteristic Sound+ writes to unlock `20231219-...`
-   and confirms the account-key/HMAC mechanism. See [CAPTURE.md](CAPTURE.md).
-2. **Recover the account key**: either extract it from the phone's Fast Pair store,
-   or perform a fresh Fast Pair pairing as a Seeker (needs the anti-spoofing public
-   key for Model ID `35 d6 76`) so we generate the key ourselves.
-3. **Replicate the auth** in `jabra_osc.py`'s `authenticate()` hook (HMAC-SHA256
-   over the `fe2c123a` nonce), then subscribe to `20231219-...0001/0003`.
-4. **Decode** the orientation packets (try float32 / int16-scaled quaternion /
-   Euler - `tools/jabra_listen.py` already prints all candidates) and emit OSC.
+The plan above was carried out on a rooted **OnePlus 5T** (Android 10, Frida 17).
+Result: **definitive negative.**
+
+- **System-wide GATT** (`com.android.bluetooth`, `onNotify` +
+  `registerForNotification`): **zero** head-tracking notifications or subscribes
+  during head movement - nothing streams to any app.
+- **Sound+ uses no buds channel we can see**: five Frida runs hooking connectGatt,
+  GATT writes/subscribes, `createRfcommSocket` and `BluetoothSocket` read/write
+  stayed silent, even on a forced reconnect. `dumpsys` confirms Sound+ holds **no
+  GATT link**; the only GATT client is **Google Play Services** (Fast Pair). Audio
+  is **Classic A2DP**.
+- The Fast Pair **account key is not locally extractable**: GMS keeps it in
+  cloud-synced "Footprints", not the on-disk Fast Pair caches (empty here).
+- Independently, head tracking works on a **Mac with no Jabra software** and on
+  this **Atmos-incapable phone** - so the binauralisation + tracking are entirely
+  on the buds.
+
+Conclusion: `20231219-...` is a **dormant, auth-gated service no client ever
+uses**, and the orientation is **never transmitted off the buds**. Hook scripts:
+[../tools/frida/](../tools/frida/).
+
+## Getting orientation off the device: feasibility
+
+What it would actually take to use the Elite 10 Gen 2 as a host head tracker,
+honestly ranked.
+
+### Feasible
+- **Use a different tracker.** The sibling OpenNx (Waves Nx) and mmrl-osc
+  (MetaMotion RL) repos already stream orientation as OSC. This is the practical
+  answer if you want head tracking today; it just is not the Jabra.
+- **Ask Jabra to expose it.** A firmware/SDK feature publishing orientation on an
+  open (or documented, authable) characteristic would make this trivial. There is
+  no technical blocker on the buds - they compute the orientation already; it is a
+  product decision. A feature request is the only "feasible" path that ends with
+  *the Jabra* working.
+
+### Long shot (low odds, high effort, uncertain payoff)
+- **Unlock `20231219-...`.** It is the buds' own orientation/state port, just
+  locked and unused. Requires (a) the Fast Pair account key - recoverable only by
+  a runtime Frida capture in GMS, or by exporting it from the Google account's
+  Footprints, not from disk - and (b) the *unlock command*, which is
+  **undocumented and demonstrated by no client** (not even Sound+ or GMS touch
+  it). Even if unlocked, there is no evidence it emits live orientation. Odds: low.
+
+### Not feasible
+- **Sniff an existing stream.** There is none - proven across GATT and RFCOMM. You
+  cannot intercept traffic that does not exist.
+- **macOS / iOS CoreMotion** (`CMHeadphoneMotionManager`): Apple gates
+  head-tracked motion to AirPods / Beats with Apple silicon; third-party headsets
+  including Jabra are not supported.
+- **Android Spatializer / head-tracking HAL** (Android 13+): needs the headset to
+  report orientation through a standard LE-Audio/HAL path. The Jabra keeps it
+  internal, so the OS framework never sees it either.
+- **BLE man-in-the-middle / proxy.** Nothing to relay; the orientation is not on
+  the wire.
+- **Patch the firmware** to stream orientation out: Jabra firmware images are
+  **signed**, so a modified image cannot be flashed. Static RE could locate the
+  fusion code but yields no live feed.
+- **JTAG / SWD on the bud's PCB.** Destructive (you must open a sealed earbud), the
+  debug port on production Qualcomm silicon is typically fused/locked, and there is
+  no spare radio to stream the value to a host. High risk of bricking the buds for
+  no usable result.
+
+**Bottom line:** with the hardware as shipped, there is no non-destructive,
+reasonable-effort path to a live orientation feed. The buds keep the data to
+themselves by design.
 
 ---
 

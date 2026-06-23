@@ -1,11 +1,30 @@
-# Resume plan: account-key extraction (rooted Android) → unlock test
+# Account-key extraction (rooted Android) → unlock test  [EXECUTED]
 
-This is the one remaining experiment that settles whether the Jabra Elite 10
-Gen 2 exposes head orientation to a host at all. Everything else is done and
-documented (see [PROTOCOL.md](PROTOCOL.md)). Current best guess: **~80% likely
-there is no usable orientation stream** (on-device spatialisation; the phone
-never subscribes to `20231219-...` in any capture). This procedure confirms it
-either way.
+> **Outcome (executed on a rooted OnePlus 5T, Android 10, Frida 17):** definitive
+> negative - the orientation never leaves the buds.
+> - A **system-wide Bluetooth-stack hook** (`com.android.bluetooth`,
+>   `onNotify` + `registerForNotification`) saw **zero** head-tracking
+>   notifications or subscribes during head movement.
+> - **Sound+ uses neither BLE GATT nor Classic RFCOMM** - across five Frida runs
+>   (connectGatt, GATT writes/subscribes, `createRfcommSocket`, `BluetoothSocket`
+>   read/write) it never touched the buds. `dumpsys` confirms Sound+ holds **no
+>   GATT link**; the only GATT client is Google Play Services (Fast Pair), and
+>   audio is Classic A2DP.
+> - The Fast Pair **account key is not locally extractable**: GMS stores it in
+>   cloud-synced "Footprints", not the on-disk Fast Pair caches (which were empty).
+> - `20231219-...` is therefore a **dormant, auth-gated service no client ever
+>   uses**. Combined with head tracking working on a **Mac (no Jabra software)**
+>   and on this **Atmos-incapable phone**, this settles it:
+>   **the Elite 10 Gen 2 does head tracking on-device and exposes no
+>   host-accessible orientation feed.**
+>
+> The hook scripts used are in [../tools/frida/](../tools/frida/). The full
+> feasibility breakdown is in
+> [PROTOCOL.md](PROTOCOL.md#getting-orientation-off-the-device-feasibility).
+
+The procedure that was followed (kept for reference and reproduction) is below.
+It was the one remaining experiment that settles whether the Jabra Elite 10
+Gen 2 exposes head orientation to a host at all.
 
 ## Goal
 

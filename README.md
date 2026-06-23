@@ -1,4 +1,4 @@
-[![Python](https://img.shields.io/badge/Python-3.9+-blue.svg)]() [![bleak](https://img.shields.io/badge/bleak-BLE-1F6FEB.svg)]() [![python-osc](https://img.shields.io/badge/python--osc-OSC-1F6FEB.svg)]() [![macOS](https://img.shields.io/badge/macOS-Apple%20Silicon-000000.svg?logo=apple&logoColor=white)]() [![Device](https://img.shields.io/badge/device-Jabra%20Elite%2010%20Gen%202-8A2BE2.svg)]() [![Status](https://img.shields.io/badge/status-blocked%3A%20Fast%20Pair%20auth-red.svg)](docs/PROTOCOL.md) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
+[![Python](https://img.shields.io/badge/Python-3.9+-blue.svg)]() [![bleak](https://img.shields.io/badge/bleak-BLE-1F6FEB.svg)]() [![python-osc](https://img.shields.io/badge/python--osc-OSC-1F6FEB.svg)]() [![macOS](https://img.shields.io/badge/macOS-Apple%20Silicon-000000.svg?logo=apple&logoColor=white)]() [![Device](https://img.shields.io/badge/device-Jabra%20Elite%2010%20Gen%202-8A2BE2.svg)]() [![Status](https://img.shields.io/badge/status-dead%20end%3A%20on--device%20tracking-red.svg)](docs/PROTOCOL.md) [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](./LICENSE)
 
 # jabra-elite10-re - Jabra Elite 10 Gen 2 head-tracking reverse engineering
 
@@ -15,10 +15,10 @@ with the same OSC output:
 | `/ypr` | `yaw pitch roll` (degrees) | SPARTA, Atmoky, dearVR |
 | `/Virtuoso/quat` | `qw qx qy qz` | APL Virtuoso |
 
-The result is a **documented dead end**: the orientation is gated behind Google
-Fast Pair authentication and most likely never crosses GATT to a host at all (see
-[Status](#status)). `jabra_osc.py` is an honest, runnable **skeleton**; the
-write-up is the deliverable.
+The result is a **confirmed dead end**: the buds do head tracking entirely
+on-device, and the orientation never reaches a host over any channel (verified on
+a rooted Android - see [Status](#status)). `jabra_osc.py` is an honest, runnable
+**skeleton**; the write-up is the deliverable.
 
 **Protocol and analysis:** the full reverse-engineered GATT map, the Fast Pair
 finding, and the capture evidence are in **[docs/PROTOCOL.md](docs/PROTOCOL.md)**.
@@ -32,14 +32,19 @@ Part of a set of open head-tracking tools for spatial audio:
 
 ## Status
 
-This project is **blocked, and probably a dead end**; the analysis is the
-deliverable. The GATT interface is fully mapped and the orientation service is
-located (`20231219-1730-...`), but it refuses subscription on an unauthenticated
-link, and three packet captures indicate the data likely never reaches a host at
-all. `jabra_osc.py` is an honest working **skeleton**: scan, connect, battery,
-`authenticate()` (the open hook), subscribe, decode, OSC, tare, reconnect.
-Everything except `authenticate()` is in place; the bridge runs and stops with a
-clear message at the auth step.
+**Confirmed dead end** (the analysis is the deliverable). The GATT interface is
+fully mapped and the orientation service is located (`20231219-1730-...`), but the
+buds do head tracking **entirely on-device** and never send orientation to a host
+over any channel. This was settled on a **rooted Android (OnePlus 5T)** with
+Frida: across a system-wide Bluetooth-stack hook (`com.android.bluetooth`), Sound+
+on every transport (BLE GATT and Classic RFCOMM), and `dumpsys`, **nothing streams
+orientation to anyone** - Sound+ holds no GATT link at all (only Google Play
+Services does, for Fast Pair), and audio is Classic A2DP. It is confirmed
+independently by head tracking working on a **Mac with zero Jabra software** and
+on this **Atmos-incapable phone**. `jabra_osc.py` is an honest **skeleton** (scan,
+connect, battery, `authenticate()` hook, subscribe, decode, OSC, tare, reconnect);
+it runs and stops at the auth step, which no host can satisfy because the feed
+does not exist.
 
 Key findings:
 
@@ -51,12 +56,15 @@ Key findings:
   **never subscribes to `20231219-...`** and orientation **never crosses GATT**.
   The Elite 10 does head tracking **on-device** (it works with any source, e.g.
   Apple Music, with no Jabra software running), so, unlike the Nx / MMRL
-  trackers, it appears not to expose a host orientation feed.
+  trackers, it does **not** expose a host orientation feed.
+- **The rooted-Android test is done** (it was the one outstanding experiment):
+  the system-wide stack hook and Sound+ transport hooks were silent across five
+  runs; the Fast Pair account key is not locally extractable (cloud "Footprints"),
+  and `20231219-...` is a dormant, auth-gated service no client ever uses. See
+  [docs/ROOT_EXTRACTION.md](docs/ROOT_EXTRACTION.md) for the executed procedure
+  and outcome, and **[what is and is not feasible](docs/PROTOCOL.md#getting-orientation-off-the-device-feasibility)**.
 
-The one experiment that would settle it is extracting the Fast Pair account key
-from a **rooted** Android and testing whether `20231219-...`, once authenticated,
-emits anything. Procedure: **[docs/ROOT_EXTRACTION.md](docs/ROOT_EXTRACTION.md)**.
-How to capture the handshake: **[docs/CAPTURE.md](docs/CAPTURE.md)**.
+How the handshake was captured: **[docs/CAPTURE.md](docs/CAPTURE.md)**.
 
 ## What was discovered (short version)
 

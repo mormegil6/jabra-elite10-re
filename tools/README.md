@@ -16,6 +16,7 @@ own as an argument (every script accepts one) or edit the constant.
 | `jabra_listen.py` | - | Live listener/decoder: subscribe to head-tracking + fe2c channels and print every candidate orientation decoding (float32 / int16-quaternion / Euler). Used to test the multipoint piggyback (failed) and will decode the stream once unlocked. |
 | `jabra_mitm_prep.py` | D | Verify the central role + print the clone "mirror map"; detect the (absent) peripheral role and explain why a macOS MitM is impractical, with capture alternatives. |
 | `jabra_hci_parse.py` | D | Parse an Android `btsnoop_hci.log` and print the Fast Pair / head-tracking ATT ops (nonce read, auth write, subscribe, start command, orientation packets), named via the Stage-A handle map. No dependencies. |
+| [`frida/`](frida/) | E | Rooted-Android Frida hooks (Bluetooth stack, Sound+ transports, GMS crypto) used to confirm the buds never send orientation to a host. See [frida/README.md](frida/README.md). |
 
 ## Typical flow
 
