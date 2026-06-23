@@ -30,3 +30,7 @@ jabra-venv/
 captures/*.txt
 captures/*.jsonl
 captures/*.csv
+
+# Downloaded external tools (frida-server, devkits, etc.); unpacked locally,
+# never committed
+downloads/
