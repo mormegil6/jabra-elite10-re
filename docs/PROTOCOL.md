@@ -226,6 +226,34 @@ Conclusion: `20231219-...` is a **dormant, auth-gated service no client ever
 uses**, and the orientation is **never transmitted off the buds**. Hook scripts:
 [../tools/frida/](../tools/frida/).
 
+## Observed behaviour: it auto-recenters (an effect, not a sensor output)
+
+The head tracking **auto-recenters**: hold your head still facing a new direction
+for a few seconds and the soundstage "front" drifts to that new direction. That
+fingerprints the algorithm and, more importantly, the *nature* of the value the
+buds compute:
+
+- **Yaw (left/right) is relative gyro integration with slow recentering.** A
+  gyroscope measures rotation rate, so absolute heading drifts; the recentering
+  cancels that drift and produces the consumer "soundstage stays in front of me"
+  effect. There is no absolute compass reference (no magnetometer, or it is
+  ignored to avoid magnetic interference).
+- **Pitch and roll are almost certainly gravity-referenced (absolute)** - the
+  accelerometer feels "down", so up/down and tilt neither drift nor recenter. Only
+  yaw wanders. This is the standard 6-axis-IMU earbud tracker, the same model as
+  AirPods "Spatialize Stereo".
+
+Implication for spatial-audio production: **even if `20231219-...` could be
+unlocked and it did emit orientation, the most important axis for the work, yaw,
+would be a recentering, drifting estimate** - not the stable absolute heading a
+purpose-built tracker (Waves Nx, MMRL) provides. The buds deliberately discard
+absolute heading in favour of "always sounds like it is in front of you".
+
+So there was never a clean orientation feed to expose: what the buds compute is a
+post-processed, recentered, consumer-tuned estimate baked into the audio
+rendering - an **effect, not a sensor output**. That is the deeper reason it lives
+only on the buds.
+
 ## Getting orientation off the device: feasibility
 
 What it would actually take to use the Elite 10 Gen 2 as a host head tracker,
