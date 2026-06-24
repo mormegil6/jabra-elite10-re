@@ -37,7 +37,7 @@ import time
 
 from bleak import BleakClient
 
-JABRA_ADDRESS = "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
+JABRA_ADDRESS = "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"  # set to your device address (per-Mac UUID on macOS, shown during a scan)
 
 NONCE = "fe2c123a"
 CMD = "fe2c1236"

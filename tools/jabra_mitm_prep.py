@@ -39,7 +39,7 @@ import asyncio
 from bleak import BleakClient
 from bleak.uuids import normalize_uuid_str
 
-JABRA_ADDRESS = "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
+JABRA_ADDRESS = "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"  # set to your device address (per-Mac UUID on macOS, shown during a scan)
 
 # Characteristics a proxy/clone must mirror and log writes to. These are the
 # Fast Pair + head-tracking attributes that matter for authentication.

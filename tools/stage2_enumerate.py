@@ -31,7 +31,7 @@ from bleak.uuids import normalize_uuid_str
 # The Jabra Elite 10 Gen 2 as it enumerates on this Mac. macOS CoreBluetooth
 # addresses peripherals by a per-host UUID (not a MAC); this value differs on
 # other machines. Re-run tools/stage1_scan.py to obtain it for another host.
-JABRA_ADDRESS = "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
+JABRA_ADDRESS = "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"  # set to your device address (per-Mac UUID on macOS, shown during a scan)
 
 # How long to wait on any single read before giving up and moving on. The feff
 # descriptor read hangs forever without this.

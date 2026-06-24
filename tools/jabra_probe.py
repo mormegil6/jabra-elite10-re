@@ -47,7 +47,7 @@ import time
 from bleak import BleakClient
 from bleak.uuids import normalize_uuid_str
 
-JABRA_ADDRESS = "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"
+JABRA_ADDRESS = "XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX"  # set to your device address (per-Mac UUID on macOS, shown during a scan)
 
 # Characteristics referenced by short needle (substring of the full UUID).
 C_3A01 = "00003a01"
