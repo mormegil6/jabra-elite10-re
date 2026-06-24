@@ -4,16 +4,9 @@
 
 A reverse-engineering writeup of the **Jabra Elite 10 Gen 2** earbuds' on-board
 head tracking over Bluetooth LE. The goal was to drive spatial-audio plugins from
-the buds on **macOS**, the way the sibling
+the buds on **macOS** with OSC, the way the sibling
 [OpenNx](https://github.com/mormegil6/opennx) and
-[mmrl-osc](https://github.com/mormegil6/mmrl-osc) trackers do,
-with the same OSC output:
-
-| OSC address | Arguments | Target |
-|---|---|---|
-| `/SceneRotator/quaternions` | `qw qx qy qz` | IEM Plugin Suite (SceneRotator) |
-| `/ypr` | `yaw pitch roll` (degrees) | SPARTA, Atmoky, dearVR |
-| `/Virtuoso/quat` | `qw qx qy qz` | APL Virtuoso |
+[mmrl-osc](https://github.com/mormegil6/mmrl-osc) trackers do.
 
 The result is a **confirmed dead end**: the buds do head tracking entirely
 on-device, and the orientation never reaches a host over any channel (verified on
