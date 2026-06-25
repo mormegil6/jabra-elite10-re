@@ -10,8 +10,9 @@ the buds on **macOS** with OSC, the way the sibling
 
 The result is a **confirmed dead end**: the buds do head tracking entirely
 on-device, and the orientation never reaches a host over any channel (verified on
-a rooted Android - see [Status](#status)). `jabra_osc.py` is an honest, runnable
-**skeleton**; the write-up is the deliverable.
+a rooted Android - see [Status](#status)). `jabra_osc.py` is a runnable
+**skeleton** (it stops at the auth step no host can satisfy); the
+reverse-engineering is in [docs/PROTOCOL.md](docs/PROTOCOL.md).
 
 **Protocol and analysis:** the full reverse-engineered GATT map, the Fast Pair
 finding, and the capture evidence are in **[docs/PROTOCOL.md](docs/PROTOCOL.md)**.
@@ -20,12 +21,13 @@ finding, and the capture evidence are in **[docs/PROTOCOL.md](docs/PROTOCOL.md)*
 
 Part of a set of open head-tracking tools for spatial audio:
 
+- **Busola** ([GitLab](https://git.pg.edu.pl/p829296/busola-app) / [GitHub](https://github.com/mormegil6/busola-app)) - the macOS menu-bar **app**: one GUI for several head trackers (MetaMotion RL, Waves Nx, Supperware, MrHeadTracker), with device discovery, remembered devices, live profile-switching and CSV logging - the conveniences these CLI bridges leave out
 - **OpenNx** ([GitLab](https://git.pg.edu.pl/p829296/opennx) / [GitHub](https://github.com/mormegil6/opennx)) - Waves Nx head tracker → OSC bridge, cross-platform (macOS / Windows / Linux)
 - **mmrl-osc** ([GitLab](https://git.pg.edu.pl/p829296/mmrl-osc) / [GitHub](https://github.com/mormegil6/mmrl-osc)) - Mbientlab MetaMotion RL → OSC head tracker with host-side VQF sensor fusion
 
 ## Status
 
-**Confirmed dead end** (the analysis is the deliverable). The GATT interface is
+**Confirmed dead end.** The GATT interface is
 fully mapped and the orientation service is located (`20231219-1730-...`), but the
 buds do head tracking **entirely on-device** and never send orientation to a host
 over any channel. This was settled on a **rooted Android (OnePlus 5T)** with
@@ -34,7 +36,7 @@ on every transport (BLE GATT and Classic RFCOMM), and `dumpsys`, **nothing strea
 orientation to anyone** - Sound+ holds no GATT link at all (only Google Play
 Services does, for Fast Pair), and audio is Classic A2DP. It is confirmed
 independently by head tracking working on a **Mac with zero Jabra software** and
-on this **Atmos-incapable phone**. `jabra_osc.py` is an honest **skeleton** (scan,
+on this **Atmos-incapable phone**. `jabra_osc.py` is a **skeleton** (scan,
 connect, battery, `authenticate()` hook, subscribe, decode, OSC, tare, reconnect);
 it runs and stops at the auth step, which no host can satisfy because the feed
 does not exist.

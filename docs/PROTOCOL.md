@@ -256,8 +256,8 @@ only on the buds.
 
 ## Getting orientation off the device: feasibility
 
-What it would actually take to use the Elite 10 Gen 2 as a host head tracker,
-honestly ranked.
+What it would take to use the Elite 10 Gen 2 as a host head tracker, ranked by
+feasibility.
 
 ### Feasible
 - **Use a different tracker.** The sibling OpenNx (Waves Nx) and mmrl-osc

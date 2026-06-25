@@ -11,7 +11,7 @@ Tested on a rooted **OnePlus 5T** (Android 10) with **frida-server 17.x**.
 
 | Script | Attach to | What it shows |
 |--------|-----------|----------------|
-| `jabra_stack_hook.js` | `com.android.bluetooth` | **System-wide** GATT: every `onNotify` + `registerForNotification`, for all apps. The decisive instrument - if anything streamed over BLE GATT, it would appear here. It did not. |
+| `jabra_stack_hook.js` | `com.android.bluetooth` | **System-wide** GATT: every `onNotify` + `registerForNotification`, for all apps. The system-wide catch-all - if anything streamed over BLE GATT, it would appear here. It did not. |
 | `jabra_gatt_hook.js` | `Sound+` | Sound+'s own GATT ops (subscribe / write / read) + a best-effort hook of its `BluetoothGattCallback` for notifications. |
 | `jabra_rfcomm_hook.js` | `Sound+` | Classic **RFCOMM** I/O (`BluetoothSocket` read/write) - the channel Sound+ would use, since it holds no GATT link. Silent. |
 | `jabra_full_hook.js` | `Sound+` (spawn) | All transports at once: `connectGatt`, GATT writes/subscribes, `createRfcommSocket`, socket connect/read/write. |
