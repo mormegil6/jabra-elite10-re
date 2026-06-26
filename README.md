@@ -5,8 +5,8 @@
 A reverse-engineering writeup of the **Jabra Elite 10 Gen 2** earbuds' on-board
 head tracking over Bluetooth LE. The goal was to drive spatial-audio plugins from
 the buds on **macOS** with OSC, the way the sibling
-[OpenNx](https://github.com/mormegil6/opennx) and
-[mmrl-osc](https://github.com/mormegil6/mmrl-osc) trackers do.
+[openNx](https://github.com/mormegil6/opennx) and
+[openMMRL](https://github.com/mormegil6/openmmrl) trackers do.
 
 The result is a **confirmed dead end**: the buds do head tracking entirely
 on-device, and the orientation never reaches a host over any channel (verified on
@@ -121,8 +121,8 @@ they document how each finding was obtained. See [tools/README.md](tools/README.
 Part of a set of open head-tracking tools for spatial audio:
 
 - **Busola** ([GitLab](https://git.pg.edu.pl/p829296/busola-app) / [GitHub](https://github.com/mormegil6/busola-app)) - the menu-bar **app**: one GUI for several head trackers (MetaMotion RL, Waves Nx, Supperware, MrHeadTracker), with device discovery, remembered devices, live profile-switching and CSV logging - the conveniences these CLI bridges leave out
-- **OpenNx** ([GitLab](https://git.pg.edu.pl/p829296/opennx) / [GitHub](https://github.com/mormegil6/opennx)) - Waves Nx head tracker → OSC bridge, cross-platform (macOS / Windows / Linux)
-- **mmrl-osc** ([GitLab](https://git.pg.edu.pl/p829296/mmrl-osc) / [GitHub](https://github.com/mormegil6/mmrl-osc)) - Mbientlab MetaMotion RL → OSC head tracker with host-side VQF sensor fusion
+- **openNx** ([GitLab](https://git.pg.edu.pl/p829296/opennx) / [GitHub](https://github.com/mormegil6/opennx)) - Waves Nx head tracker → OSC bridge, cross-platform (macOS / Windows / Linux)
+- **openMMRL** ([GitLab](https://git.pg.edu.pl/p829296/openmmrl) / [GitHub](https://github.com/mormegil6/openmmrl)) - Mbientlab MetaMotion RL → OSC head tracker with host-side VQF sensor fusion
 
 ## License
 

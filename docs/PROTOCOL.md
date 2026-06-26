@@ -260,7 +260,7 @@ What it would take to use the Elite 10 Gen 2 as a host head tracker, ranked by
 feasibility.
 
 ### Feasible
-- **Use a different tracker.** The sibling OpenNx (Waves Nx) and mmrl-osc
+- **Use a different tracker.** The sibling openNx (Waves Nx) and openMMRL
   (MetaMotion RL) repos already stream orientation as OSC. This is the practical
   answer if you want head tracking today; it just is not the Jabra.
 - **Ask Jabra to expose it.** A firmware/SDK feature publishing orientation on an
@@ -309,7 +309,7 @@ prints every candidate decoding of each `20231219` packet (4xfloat32, 4xint16
 scaled to a unit quaternion with `|q|` check, 3xint16/float Euler), which is how
 the Waves Nx and MMRL formats were nailed down. Cross-check the axis/sign mapping
 against a known-good tracker (Waves Nx or MMRL) streaming simultaneously, the way
-the OpenNx repo's `tools/stage4_dual.py` does.
+the openNx repo's `tools/stage4_dual.py` does.
 
 ---
 
